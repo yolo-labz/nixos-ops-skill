@@ -1,0 +1,5 @@
+{
+  "name": "nixos-ops",
+  "version": "1.0.0",
+  "description": "NixOS operations skill for multi-host flake management: build, debug, module creation, and host-aware diagnostics"
+}
