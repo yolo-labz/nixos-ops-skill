@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate skill manifest + scripts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate JSON syntax
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r f; do
+            if ! python -m json.tool "$f" > /dev/null; then
+              echo "::error file=$f::Invalid JSON syntax"
+              fail=1
+            fi
+          done < <(git ls-files '*.json')
+          exit "$fail"
+
+      - name: Validate plugin manifest schema
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, sys
+          ok = True
+          with open(".claude-plugin/plugin.json") as f:
+              pj = json.load(f)
+          for k in ("name", "version", "description"):
+              if k not in pj:
+                  print(f"::error file=.claude-plugin/plugin.json::missing key '{k}'")
+                  ok = False
+          sys.exit(0 if ok else 1)
+          PY
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r f; do
+            if ! head -1 "$f" | grep -q '^---$'; then
+              echo "::error file=$f::Missing YAML frontmatter opener"
+              fail=1
+            fi
+            if ! grep -q '^name:' "$f" || ! grep -q '^description:' "$f"; then
+              echo "::error file=$f::SKILL.md must include 'name:' and 'description:' frontmatter"
+              fail=1
+            fi
+          done < <(git ls-files '**/SKILL.md')
+          exit "$fail"
+
+      - name: Shell script syntax check (bash -n)
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r f; do
+            if ! bash -n "$f"; then
+              echo "::error file=$f::Bash syntax error"
+              fail=1
+            fi
+          done < <(git ls-files '*.sh')
+          exit "$fail"
+
+  actionlint:
+    name: Lint GitHub Actions workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Run actionlint
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
