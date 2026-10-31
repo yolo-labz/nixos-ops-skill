@@ -36,3 +36,8 @@ Conventional Commits + semver. Releases are signed and attested via `actions/att
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
+
+---
+
+Part of **[yolo-labz](https://github.com/yolo-labz)** — small tools, deliberate automation.
+[Org profile](https://github.com/yolo-labz) · [All repositories](https://github.com/orgs/yolo-labz/repositories) · [Engineering notes](https://blog.home301server.com.br)
