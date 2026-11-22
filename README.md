@@ -1,6 +1,6 @@
 # nixos-ops-skill
 
-NixOS operations skill for [Claude Code](https://claude.com/claude-code) — covers rebuild workflows, generation management, debugging activation failures, and cross-host deployment patterns specific to NixOS + nix-darwin flakes.
+NixOS operations skill for [Claude Code](https://claude.com/claude-code), covers rebuild workflows, generation management, debugging activation failures, and cross-host deployment patterns specific to NixOS + nix-darwin flakes.
 
 ## Layout
 
@@ -35,9 +35,9 @@ Conventional Commits + semver. Releases are signed and attested via `actions/att
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+MIT, see [`LICENSE`](LICENSE).
 
 ---
 
-Part of **[yolo-labz](https://github.com/yolo-labz)** — small tools, deliberate automation.
+Part of **[yolo-labz](https://github.com/yolo-labz)**: small tools, deliberate automation.
 [Org profile](https://github.com/yolo-labz) · [All repositories](https://github.com/orgs/yolo-labz/repositories) · [Engineering notes](https://blog.home301server.com.br)
